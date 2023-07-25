@@ -22,9 +22,15 @@ pip install --upgrade pip
 pip install -r requirements.txt
 npm install nsfwjs
 
-# Run the configuration script
-chmod +x install.sh
+chmod +x configure.sh
 ./configure.sh
 
-echo "Installation completed successfully. The system will now reboot."
+echo "Installation completed successfully. The system will now reboot in 5 seconds. Press Ctrl+C to cancel."
+
+for i in 5 4 3 2 1
+do
+   echo $i
+   sleep 1
+done
+
 sudo reboot
