@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo apt install python3.10-venv
-
+echo "this will reboot at the end, cancel now if you do not wish this to happen."
 # Install necessary system packages
 sudo apt-get update && sudo apt-get -y upgrade
 sudo apt-get install -y python3-pip python3-dev cron
@@ -34,5 +34,7 @@ npm install nsfwjs
 curl -O https://raw.githubusercontent.com/andylehti/Reddit-AI-Moderator/main/configure.sh
 chmod +x configure.sh
 ./configure.sh
+
+sudo reboot
 
 #!/bin/bash
