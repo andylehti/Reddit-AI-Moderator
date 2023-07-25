@@ -4,7 +4,7 @@ This project contains a Reddit bot built with the PRAW (Python Reddit API Wrappe
 
 ### Installation
 
-1. Run the install script:
+1. Run the install script: This will reboot the server.
 
     ```
     curl -O https://raw.githubusercontent.com/andylehti/Reddit-AI-Moderator/main/install.sh && chmod +x install.sh
