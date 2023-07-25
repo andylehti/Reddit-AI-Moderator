@@ -51,6 +51,8 @@ echo "{
   \"password\": \"$password\"
 }" > credentials.json
 
+# start_mod.py
+
 echo "#!/usr/bin/env python3
 import os
 import nltk
@@ -76,7 +78,7 @@ reddit = praw.Reddit(
 )
 
 subreddit = reddit.subreddit('$subreddit')
-moderator = SubredditModerator(subreddit, score_posts='$score_posts', score_comments='$score_comments')
+moderator = SubredditModerator(subreddit, score_posts='$score_posts' == 'yes', score_comments='$score_comments' == 'yes')
 moderator.start_moderating()" > start_mod.py
 
 # Make the script executable
