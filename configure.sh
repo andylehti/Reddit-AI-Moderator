@@ -54,7 +54,7 @@ echo "{
 echo "#!/usr/bin/env python3
 import praw
 import json
-from suremod import SubredditModerator
+from ai-automod import SubredditModerator
 
 with open('credentials.json') as f:
     creds = json.load(f)
@@ -69,10 +69,10 @@ reddit = praw.Reddit(
 
 subreddit = reddit.subreddit('$subreddit')
 moderator = SubredditModerator(subreddit, score_posts='$score_posts', score_comments='$score_comments')
-moderator.start_moderating()" > suremod.py
+moderator.start_moderating()" > start-mod.py
 
 # Make the script executable
-chmod +x suremod.py
+chmod +x start-mod.py
 
 # Add the script to crontab so that it will run on startup
 (crontab -l 2>/dev/null; echo "@reboot nohup $PWD/venv/bin/python $PWD/suremod.py &") | crontab -
