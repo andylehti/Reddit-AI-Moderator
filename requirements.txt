@@ -1,0 +1,12 @@
+nltk
+transformers
+vaderSentiment
+praw
+easyocr
+fuzzywuzzy
+python-Levenshtein
+pillow
+pytesseract
+requests
+tensorflow
+transformers
