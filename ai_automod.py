@@ -11,6 +11,7 @@ import pytesseract
 from nltk.sentiment import SentimentIntensityAnalyzer
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
 import nltk
+from dotenv import load_dotenv
 
 nltk.download('punkt')
 nltk.download('vader_lexicon')
@@ -75,6 +76,8 @@ handler.setFormatter(logging.Formatter('%(asctime)s - %(message)s', datefmt='%d-
 logger.addHandler(handler)
 
 def main():
+    load_dotenv()  # Load environment variables from .env file
+
     reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'), 
                          client_secret=os.getenv('REDDIT_CLIENT_SECRET'), 
                          user_agent=os.getenv('REDDIT_USER_AGENT'), 
