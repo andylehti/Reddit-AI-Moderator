@@ -73,12 +73,24 @@ def main():
 
     moderator = SubredditModerator(reddit.subreddit(subreddit_name), banned_phrases)
 
+    # Get the 100 most recent posts
+    most_recent_posts = [post for post in moderator.subreddit.new(limit=100)]
+
     while True:
-        for submission in moderator.subreddit.new(limit=100):  # Adjust limit as needed
+        time.sleep(10)  # Wait for 10 seconds
+
+        # Get the 100 most recent posts again
+        new_most_recent_posts = [post for post in moderator.subreddit.new(limit=100)]
+
+        # Find the new posts that were not in the old list of most recent posts
+        new_posts = [post for post in new_most_recent_posts if post not in most_recent_posts]
+
+        # Process the new posts (moderation actions, etc.)
+        for submission in new_posts:
             is_submission_ok, reason = moderator.process_submission(submission)
             if not is_submission_ok:
                 submission.mod.remove()  # Remove submission if it does not meet the criteria
                 submission.reply(reason)  # Comment the reason for removal
 
-if __name__ == "__main__":
-    main()
+        # Update the list of most recent posts
+        most_recent_posts = new_most_recent_posts
