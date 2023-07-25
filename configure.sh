@@ -14,8 +14,33 @@ read -p 'User Agent: ' user_agent
 read -p 'Username: ' username
 read -p 'Password: ' password
 
+# Check for empty strings
+if [ -z "$client_id" ] || [ -z "$client_secret" ] || [ -z "$user_agent" ] || [ -z "$username" ] || [ -z "$password" ]; then
+  echo "Error: You must enter all Reddit API credentials."
+  exit 1
+fi
+
 # Prompt the user for their subreddit
 read -p 'Enter your subreddit: ' subreddit
+
+if [ -z "$subreddit" ]; then
+  echo "Error: You must enter a subreddit."
+  exit 1
+fi
+
+# Validate Reddit API credentials
+response=$(curl -s -I -u $username:$password https://www.reddit.com/api/v1/me.json -A $user_agent | grep HTTP)
+http_code=$(echo $response | cut -d' ' -f2)
+
+if [ "$http_code" != "200" ]; then
+  echo "Error: Invalid Reddit API credentials."
+  exit 1
+fi
+
+# Ask the user for their scoring preferences
+echo 'All removed comments and posts will have their sentiment scores commented by this bot regardless of the choices below:'
+read -p 'Do you want the bot to comment the bias and sentiment score for every post? (yes/no) ' score_posts
+read -p 'Do you want the bot to comment the bias and sentiment score for every comment? (yes/no) ' score_comments
 
 # Write the credentials to a JSON file
 echo "{
@@ -25,11 +50,6 @@ echo "{
   \"username\": \"$username\",
   \"password\": \"$password\"
 }" > credentials.json
-
-# Ask the user for their scoring preferences
-echo 'All removed comments and posts will have their sentiment scores commented by this bot regardless of the choices below:'
-read -p 'Do you want the bot to comment the bias and sentiment score for every post? (yes/no) ' score_posts
-read -p 'Do you want the bot to comment the bias and sentiment score for every comment? (yes/no) ' score_comments
 
 echo "#!/usr/bin/env python3
 import praw
