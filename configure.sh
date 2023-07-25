@@ -6,13 +6,31 @@ cd Reddit-AI-Moderator
 # Activate virtual environment
 source venv/bin/activate
 
-# Prompt the user for their Reddit API credentials
-echo "Please enter your Reddit API credentials:"
-read -p 'Client ID: ' client_id
-read -p 'Client Secret: ' client_secret
-read -p 'User Agent: ' user_agent
-read -p 'Username: ' username
-read -p 'Password: ' password
+echo "Please enter your Reddit API credentials (separate by '|') or one by one starting with client_id:"
+read input
+
+IFS='|' read -ra CREDENTIALS <<< "$input"
+
+if [ ${#CREDENTIALS[@]} -eq 5 ]; then
+  client_id=${CREDENTIALS[0]}
+  client_secret=${CREDENTIALS[1]}
+  user_agent=${CREDENTIALS[2]}
+  username=${CREDENTIALS[3]}
+  password=${CREDENTIALS[4]}
+else
+  read -p 'Client ID: ' client_id
+  read -p 'Client Secret: ' client_secret
+  read -p 'User Agent: ' user_agent
+  read -p 'Username: ' username
+  read -p 'Password: ' password
+fi
+
+# Set environment variables
+export CLIENT_ID=$client_id
+export CLIENT_SECRET=$client_secret
+export USER_AGENT=$user_agent
+export USERNAME=$username
+export PASSWORD=$password
 
 # Check for empty strings
 if [ -z "$client_id" ] || [ -z "$client_secret" ] || [ -z "$user_agent" ] || [ -z "$username" ] || [ -z "$password" ]; then
@@ -22,6 +40,9 @@ fi
 
 # Prompt the user for their subreddit
 read -p 'Enter your subreddit: ' subreddit
+
+# Set environment variable
+export SUBREDDIT=$subreddit
 
 if [ -z "$subreddit" ]; then
   echo "Error: You must enter a subreddit."
@@ -42,14 +63,9 @@ echo 'All removed comments and posts will have their sentiment scores commented 
 read -p 'Do you want the bot to comment the bias and sentiment score for every post? (yes/no) ' score_posts
 read -p 'Do you want the bot to comment the bias and sentiment score for every comment? (yes/no) ' score_comments
 
-# Write the credentials to a JSON file
-echo "{
-  \"client_id\": \"$client_id\",
-  \"client_secret\": \"$client_secret\",
-  \"user_agent\": \"$user_agent\",
-  \"username\": \"$username\",
-  \"password\": \"$password\"
-}" > credentials.json
+# Set environment variables
+export SCORE_POSTS=$score_posts
+export SCORE_COMMENTS=$score_comments
 
 # start_mod.py
 
@@ -66,19 +82,16 @@ def install_nltk_data():
 
 install_nltk_data()
 
-with open('credentials.json') as f:
-    creds = json.load(f)
-
 reddit = praw.Reddit(
-  client_id=creds['client_id'],
-  client_secret=creds['client_secret'],
-  user_agent=creds['user_agent'],
-  username=creds['username'],
-  password=creds['password']
+  client_id=os.environ['CLIENT_ID'],
+  client_secret=os.environ['CLIENT_SECRET'],
+  user_agent=os.environ['USER_AGENT'],
+  username=os.environ['USERNAME'],
+  password=os.environ['PASSWORD']
 )
 
-subreddit = reddit.subreddit('$subreddit')
-moderator = SubredditModerator(subreddit, score_posts='$score_posts' == 'yes', score_comments='$score_comments' == 'yes')
+subreddit = reddit.subreddit(os.environ['SUBREDDIT'])
+moderator = SubredditModerator(subreddit, score_posts=os.environ['SCORE_POSTS'] == 'yes', score_comments=os.environ['SCORE_COMMENTS'] == 'yes')
 moderator.start_moderating()" > start_mod.py
 
 # Make the script executable
