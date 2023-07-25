@@ -60,6 +60,20 @@ class SubredditModerator:
         result = self.classifier(text)
         return result[0]['score'], result[0]['label']
 
+import logging
+from logging.handlers import RotatingFileHandler
+
+# Setup logger
+logger = logging.getLogger('')
+logger.setLevel(logging.INFO)
+
+# Setup log handler
+handler = RotatingFileHandler('moderator.log', maxBytes=1048576, backupCount=5)
+handler.setFormatter(logging.Formatter('%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S'))
+
+# Add handler to logger
+logger.addHandler(handler)
+
 def main():
     reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'), 
                          client_secret=os.getenv('REDDIT_CLIENT_SECRET'), 
@@ -76,15 +90,18 @@ def main():
 
     # Get the 100 most recent posts
     most_recent_posts = [post for post in moderator.subreddit.new(limit=100)]
+    logger.info("Fetched the most recent posts")
 
     while True:
         time.sleep(10)  # Wait for 10 seconds
 
         # Get the 100 most recent posts again
         new_most_recent_posts = [post for post in moderator.subreddit.new(limit=100)]
+        logger.info("Fetched the most recent posts again")
 
         # Find the new posts that were not in the old list of most recent posts
         new_posts = [post for post in new_most_recent_posts if post not in most_recent_posts]
+        logger.info(f"Found {len(new_posts)} new posts")
 
         # Process the new posts (moderation actions, etc.)
         for submission in new_posts:
@@ -92,6 +109,10 @@ def main():
             if not is_submission_ok:
                 submission.mod.remove()  # Remove submission if it does not meet the criteria
                 submission.reply(reason)  # Comment the reason for removal
+                logger.info(f"Removed submission: {submission.id}, Reason: {reason}")
 
         # Update the list of most recent posts
         most_recent_posts = new_most_recent_posts
+
+if __name__ == '__main__':
+    main()
