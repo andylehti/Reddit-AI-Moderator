@@ -1,6 +1,4 @@
-# Reddit AI Moderator: 
-
-[Su] b, [Re] ddit, [Mod] erator = suremod.py
+# Reddit AI Auto_Moderator: 
 
 This project contains a Reddit bot built with the PRAW (Python Reddit API Wrapper) library that monitors a specified subreddit for new posts and comments, and comments below them with bias and sentiment scores.
 
@@ -9,14 +7,8 @@ This project contains a Reddit bot built with the PRAW (Python Reddit API Wrappe
 1. Run the install script:
 
     ```
-    curl -O https://raw.githubusercontent.com/andylehti/Reddit-AI-Moderator/main/configure.sh -O https://raw.githubusercontent.com/andylehti/Reddit-AI-Moderator/main/install.sh && chmod +x configure.sh && chmod +x install.sh
+    https://raw.githubusercontent.com/andylehti/Reddit-AI-Moderator/main/install.sh && chmod +x install.sh
     ./install.sh
-    ```
-
-2. Run the configuration script:
-
-    ```
-    ./configure.sh
     ```
 
 ### Configuration
@@ -28,11 +20,11 @@ The `configure.sh` script will prompt you for the following:
 - Whether you want the bot to comment the bias and sentiment score for every post
 - Whether you want the bot to comment the bias and sentiment score for every comment
 
-These settings will be saved in a `credentials.json` file and in a `suremod.py` script that will be created by the `configure.sh` script.
+These settings will be saved in a `credentials.json` file and in a `start_mod.py` script that will be created by the `configure.sh` script.
 
 ### Extending Functionality
 
-To extend the functionality of the bot, you can add additional functions to the `SubredditModerator` class in the `suremod.py` script. These functions will have access to the `reddit` and `subreddit` instances created in the script, allowing them to interact with Reddit's API. Ensure that you call your new function properly within the existing structure.
+To extend the functionality of the bot, you can add additional functions to the `SubredditModerator` class in the `ai_automod.py` script. These functions will have access to the `reddit` and `subreddit` instances created in the script, allowing them to interact with Reddit's API. Ensure that you call your new function properly within the existing structure.
 
 For example, to add a function that replies to any comment containing the word "hello":
 
