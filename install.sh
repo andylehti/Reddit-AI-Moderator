@@ -4,6 +4,7 @@
 sudo apt-get update && sudo apt-get -y upgrade
 sudo apt-get install -y python3-pip python3-dev cron
 sudo apt-get install -y libsm6 libxext6 libxrender-dev
+sudo apt-get install -y nodejs npm
 pip install nltk transformers vaderSentiment
 
 # Add Python user bin to PATH
@@ -24,3 +25,4 @@ pip install -r requirements.txt
 # Install the Python and Node packages
 pip install praw easyocr nltk
 npm install nsfwjs
+#!/bin/bash
