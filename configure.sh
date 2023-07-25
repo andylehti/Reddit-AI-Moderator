@@ -98,6 +98,6 @@ moderator.start_moderating()" > start_mod.py
 chmod +x start_mod.py
 
 # Add the script to crontab so that it will run on startup
-(crontab -l 2>/dev/null; echo "@reboot nohup $PWD/venv/bin/python $PWD/suremod.py &") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot nohup $PWD/start_mod.py &") | crontab -
 
 echo "Installation completed successfully. The bot will now start automatically whenever the server is rebooted."

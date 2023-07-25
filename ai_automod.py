@@ -1,5 +1,3 @@
-# AntiBiasMod
-
 import os
 import getpass
 import praw
@@ -12,9 +10,10 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
 import nltk
 from dotenv import load_dotenv
+from transformers import pipeline, AutoTokenizer, TFAutoModelForSequenceClassification
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from fuzzywuzzy import fuzz
 
-nltk.download('punkt')
-nltk.download('vader_lexicon')
 
 class SubredditModerator:
     def __init__(self, subreddit, banned_phrases):
@@ -25,6 +24,45 @@ class SubredditModerator:
         self.model = TFAutoModelForSequenceClassification.from_pretrained("d4data/bias-detection-model")
         self.classifier = pipeline('text-classification', model=self.model, tokenizer=self.tokenizer)
 
+
+    def adhominem_detector(self, text):
+        adhominem_pipeline = pipeline("text-classification", model="delboc/ComputationalAdHominemDetection")
+        result = adhominem_pipeline(text)
+        return result[0]['label'], result[0]['score']
+    
+    def process_comments(self):
+        subreddits = self.config["subreddits"]
+        mod_subs = "+".join(subreddits)
+        
+        for comment in self.reddit.subreddit(mod_subs).stream.comments(skip_existing=True):
+            adhominem_label, adhominem_score = self.adhominem_detector(comment.body)
+            bias_label, bias_score = self.bias_detector(comment.body)
+            sentiment_score = self.sentiment_analyzer(comment.body)
+            is_phrase_match = self.check_fuzzy_match(comment.body, self.config["phrases"])
+            
+            should_remove = ((adhominem_label == "ADHOMINEM" and adhominem_score > 0.45)
+                            or (bias_label == "BIAS" and bias_score > 0.49)
+                            or sentiment_score < -0.5
+                            or is_phrase_match)
+            
+            if should_remove:
+                comment.mod.remove()
+                comment.reply(f"**Comment Removed**\nComment Analysis:\nSentiment score: {sentiment_score}\nAd hominem score: {adhominem_score}\nBias score: {bias_score}")
+            elif adhominem_score >= 0.3 or bias_score >= 0.3 or sentiment_score <= -0.3:
+                comment.reply(f"Comment Analysis:\nSentiment score: {sentiment_score}\nAd hominem score: {adhominem_score}\nBias score: {bias_score}")
+            elif comment.author == "Antibotty":
+                parent_comment = comment.parent()
+                if isinstance(parent_comment, praw.models.Comment):
+                    self.process_antibotty_comment(parent_comment)
+    
+    def process_antibotty_comment(self, comment):
+        adhominem_label, adhominem_score = self.adhominem_detector(comment.body)
+        bias_label, bias_score = self.bias_detector(comment.body)
+        sentiment_score = self.sentiment_analyzer(comment.body)
+        
+        comment.reply(f"Sentiment score: {sentiment_score}, Ad hominem score: {adhominem_score}, Bias score: {bias_score}")
+
+                
     def process_submission(self, submission):
         if self.check_banned_phrases(submission) or self.check_nsfw_content(submission):
             return False, "Content does not meet criteria"
@@ -113,7 +151,10 @@ def main():
                 submission.mod.remove()  # Remove submission if it does not meet the criteria
                 submission.reply(reason)  # Comment the reason for removal
                 logger.info(f"Removed submission: {submission.id}, Reason: {reason}")
-
+        
+        # Process comments
+        moderator.process_comments()
+        
         # Update the list of most recent posts
         most_recent_posts = new_most_recent_posts
 
