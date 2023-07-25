@@ -3,6 +3,7 @@
 import os
 import getpass
 import praw
+import time
 import requests
 from fuzzywuzzy import fuzz
 from PIL import Image
