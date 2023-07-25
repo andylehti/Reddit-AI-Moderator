@@ -2,7 +2,7 @@
 
 # Install necessary system packages
 sudo apt-get update && sudo apt-get -y upgrade
-sudo apt-get install -y python3-pip python3-dev
+sudo apt-get install -y python3-pip python3-dev cron
 sudo apt-get install -y libsm6 libxext6 libxrender-dev
 pip install nltk transformers vaderSentiment
 
