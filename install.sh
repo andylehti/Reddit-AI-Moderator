@@ -27,6 +27,7 @@ pip install -r requirements.txt
 npm install nsfwjs
 
 # Run the configuration script
+chmod +x install.sh
 ./configure.sh
 
 echo "Installation completed successfully. The system will now reboot."
