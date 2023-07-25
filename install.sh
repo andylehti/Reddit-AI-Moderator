@@ -13,10 +13,6 @@ sudo apt-get install -y nodejs npm
 pip install --upgrade pip
 pip install nltk transformers vaderSentiment fuzzywuzzy pytesseract praw easyocr
 
-# Clone the repository and navigate into it
-git clone https://github.com/andylehti/Reddit-AI-Moderator.git
-cd Reddit-AI-Moderator
-
 # Create a Python virtual environment and activate it
 python3 -m venv venv
 source venv/bin/activate
