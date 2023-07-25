@@ -54,7 +54,7 @@ echo "{
 echo "#!/usr/bin/env python3
 import praw
 import json
-from ai-automod import SubredditModerator
+from ai_automod import SubredditModerator
 
 with open('credentials.json') as f:
     creds = json.load(f)
