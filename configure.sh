@@ -52,9 +52,17 @@ echo "{
 }" > credentials.json
 
 echo "#!/usr/bin/env python3
+import os
+import nltk
 import praw
 import json
 from ai_automod import SubredditModerator
+
+def install_nltk_data():
+    nltk.download('punkt')
+    nltk.download('vader_lexicon')
+
+install_nltk_data()
 
 with open('credentials.json') as f:
     creds = json.load(f)
@@ -69,10 +77,10 @@ reddit = praw.Reddit(
 
 subreddit = reddit.subreddit('$subreddit')
 moderator = SubredditModerator(subreddit, score_posts='$score_posts', score_comments='$score_comments')
-moderator.start_moderating()" > start-mod.py
+moderator.start_moderating()" > start_mod.py
 
 # Make the script executable
-chmod +x start-mod.py
+chmod +x start_mod.py
 
 # Add the script to crontab so that it will run on startup
 (crontab -l 2>/dev/null; echo "@reboot nohup $PWD/venv/bin/python $PWD/suremod.py &") | crontab -
