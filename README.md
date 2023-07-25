@@ -1,4 +1,6 @@
-# Reddit AI Moderator: Su breddit, Re ddit, Mod erator = suremod.py
+# Reddit AI Moderator: 
+
+[Su] b, [Re] ddit, [Mod] erator = suremod.py
 
 This project contains a Reddit bot built with the PRAW (Python Reddit API Wrapper) library that monitors a specified subreddit for new posts and comments, and comments below them with bias and sentiment scores.
 
