@@ -20,6 +20,7 @@ pip install --upgrade pip
 # Install the Python and Node packages
 pip install praw easyocr nltk
 npm install nsfwjs
+pip install -r requirements.txt
 
 # Prompt the user for their Reddit API credentials
 echo "Please enter your Reddit API credentials:"
@@ -70,6 +71,6 @@ moderator.start_moderating()" > suremod.py
 chmod +x suremod.py
 
 # Add the script to crontab so that it will run on startup
-(crontab -l 2>/dev/null; echo "@reboot nohup $PWD/venv/bin/python $PWD/start_moderating.py &") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot nohup $PWD/venv/bin/python $PWD/suremod.py &") | crontab -
 
 echo "Installation completed successfully. The bot will now start automatically whenever the server is rebooted."
